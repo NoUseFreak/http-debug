@@ -8,7 +8,6 @@ import (
 	"net/http/httputil"
 )
 
-
 func print(w http.ResponseWriter, r *http.Request) {
 	requestDump, err := httputil.DumpRequest(r, true)
 	if err != nil {
@@ -22,6 +21,7 @@ func print(w http.ResponseWriter, r *http.Request) {
 }
 
 type request struct {
+	Host   string
 	Method string
 	URL    string
 	Proto  string
@@ -39,6 +39,7 @@ func NewRequest(r *http.Request) (*request, error) {
 	defer r.Body.Close()
 
 	return &request{
+		Host:    r.Host,
 		Method:  r.Method,
 		URL:     r.URL.String(),
 		Proto:   r.Proto,
@@ -57,11 +58,11 @@ func printJson(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, s)
 
 	req, err := NewRequest(r)
-    if err != nil {
-        fmt.Println(err)
+	if err != nil {
+		fmt.Println(err)
 
-        return
-    }
+		return
+	}
 
 	b, err := json.Marshal(req)
 	if err != nil {
